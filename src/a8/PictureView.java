@@ -46,4 +46,9 @@ public class PictureView extends Canvas implements ROIObserver {
 		}
 		repaint();
 	}
+
+	@Override
+	public void update(Graphics g) {
+		this.paint(g);
+	}
 }

@@ -8,12 +8,12 @@ import java.awt.event.MouseListener;
 
 public class PixelInspectorWidget extends JPanel implements MouseListener{
 
-    //Declare two subpanels and an observable picture
+    //Declares two subpanels and an observable picture
     private PictureView picView;
     private JPanel picturePanel;
     private JPanel infoGrid;
 
-    //Declare box component values
+    //Declares box component values
     private Pixel clickedPixel;
     private int xCoord, yCoord;
     private double greenVal, redVal, blueVal, brightVal;
@@ -23,10 +23,10 @@ public class PixelInspectorWidget extends JPanel implements MouseListener{
     Creates Picture panel and info panel    */
     public PixelInspectorWidget(Picture picture) {
 
-        //Set layout for "Master Panel"
+        //Sets layout for "Master Panel"
         setLayout(new BorderLayout());
 
-        //Initialize the two "Sub Panels" and the observable picture
+        //Initializes the two "Sub Panels" and the observable picture
         picView = new PictureView(picture.createObservable());
         picturePanel = new JPanel();
         infoGrid = new JPanel();
@@ -38,7 +38,7 @@ public class PixelInspectorWidget extends JPanel implements MouseListener{
         infoGrid.setLayout(new GridLayout(6, 1));
         infoGrid.setPreferredSize(new Dimension(100, 400));
 
-        //Add picView within the picturePanel sub-panel
+        //Adds picView within the picturePanel sub-panel
         picView.addMouseListener(this);
         picturePanel.add(picView, BorderLayout.CENTER);
 
@@ -47,14 +47,14 @@ public class PixelInspectorWidget extends JPanel implements MouseListener{
 
         buildInfoPanel();
 
-        //adds Sub-Panels to Master-Panel
+        //Adds Sub-Panels to Master-Panel
         add(picturePanel, BorderLayout.CENTER);
         add(infoGrid, BorderLayout.WEST);
 
     }
 
     public void buildInfoPanel() {
-        //declares and initializes values within JLabels
+        //Declares and initializes values within JLabels
         JLabel xBox = new JLabel("X: " + xCoord);
         JLabel yBox = new JLabel("Y: " + yCoord);
         JLabel redBox = new JLabel("Red: " + redVal);
@@ -71,7 +71,7 @@ public class PixelInspectorWidget extends JPanel implements MouseListener{
         infoGrid.add(brightBox);
     }
 
-    //removes subpanel from main panel, updates subpanel, adds subpanel back to main panel
+    //Removes subpanel from main panel, updates subpanel, adds subpanel back to main panel
     public void updateInfoPanel() {
         this.remove(infoGrid);
         infoGrid.removeAll();
@@ -82,10 +82,10 @@ public class PixelInspectorWidget extends JPanel implements MouseListener{
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        //sets clicked pixel to temporary pixel variable "clickedPixel"
+        //Sets clicked pixel to temporary pixel variable "clickedPixel"
         clickedPixel = picView.getPicture().getPixel(e.getX(), e.getY());
 
-        //updates object information values based on clickedPixel
+        //Updates object information values based on clickedPixel
         xCoord = e.getX();
         yCoord = e.getY();
         redVal = (Math.round(clickedPixel.getRed() * 100.00)) / 100.00;
@@ -93,7 +93,7 @@ public class PixelInspectorWidget extends JPanel implements MouseListener{
         blueVal = Math.round(clickedPixel.getBlue() * 100.00) / 100.00;
         brightVal = Math.round(clickedPixel.getRed() * 100.00) / 100.00;
 
-        //updates subpanel and then updates main panel
+        //Updates subpanel and then updates main panel
         updateInfoPanel();
         updateUI();
     }
