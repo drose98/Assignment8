@@ -109,16 +109,12 @@ public class ImageAdjusterWidget extends JPanel implements ChangeListener {
         //Makes sure sliders are done moving
         if (!blur.getValueIsAdjusting() && !saturation.getValueIsAdjusting() && !brightness.getValueIsAdjusting()) {
 
-            //Blur slider is changed
-            if (e.getSource() == blur) {
-                blurPicture(blur.getValue());
-                picView.setPicture(tempPic.createObservable());
-            }
-
-            if (e.getSource() == brightness) {
-                brightenPicture(brightness.getValue());
-                picView.setPicture(tempPic.createObservable());
-            }
+            //Hierarchy that allows for cumulative filters...
+            //Clean picture passed through blur then through saturate then through brighten
+            blurPicture(blur.getValue());
+            saturatePicture(saturation.getValue());
+            brightenPicture(brightness.getValue());
+            picView.setPicture(tempPic.createObservable());
         }
     }
 
@@ -176,28 +172,60 @@ public class ImageAdjusterWidget extends JPanel implements ChangeListener {
 
         double tempRed, tempGreen, tempBlue;
 
-        for (int col = 0; col < tempPic.getWidth(); col++ ) {
+        //avoids running through this loop, if there is no change
+        if (amount != 0) {
+
+            for (int col = 0; col < tempPic.getWidth(); col++) {
+                for (int row = 0; row < tempPic.getHeight(); row++) {
+
+                    //Brightening
+                    if (amount > 0) {
+                        tempRed = tempPic.getPixel(col, row).getRed() + ((1 - tempPic.getPixel(col, row).getRed()) * (amount / 100.00));
+                        tempGreen = tempPic.getPixel(col, row).getGreen() + ((1 - tempPic.getPixel(col, row).getGreen()) * (amount / 100.00));
+                        tempBlue = tempPic.getPixel(col, row).getBlue() + ((1 - tempPic.getPixel(col, row).getBlue()) * (amount / 100.00));
+                    }
+                    //Darkening
+                    else {
+                        tempRed = tempPic.getPixel(col, row).getRed() + (tempPic.getPixel(col, row).getRed() * (amount / 100.00));
+                        tempGreen = tempPic.getPixel(col, row).getGreen() + (tempPic.getPixel(col, row).getGreen() * (amount / 100.00));
+                        tempBlue = tempPic.getPixel(col, row).getBlue() + (tempPic.getPixel(col, row).getBlue() * (amount / 100.00));
+                    }
+
+                    //Ties temp values to pixels in tempPic
+                    Pixel tempPixel = new ColorPixel(tempRed, tempGreen, tempBlue);
+                    tempPic.setPixel(col, row, tempPixel);
+                }
+            }
+        }
+
+    }
+
+    public void saturatePicture(int amount) {
+
+        double tempRed, tempGreen, tempBlue;
+
+        for (int col = 0; col < tempPic.getWidth(); col++) {
             for (int row = 0; row < tempPic.getHeight(); row++) {
 
-                if (amount > 0) {
-                    tempRed = tempPic.getPixel(col,row).getRed() + ((1- tempPic.getPixel(col,row).getRed()) * (amount / 100.00));
-                    tempGreen = tempPic.getPixel(col,row).getGreen() + ((1- tempPic.getPixel(col,row).getGreen()) * (amount / 100.00));
-                    tempBlue = tempPic.getPixel(col,row).getBlue() + ((1- tempPic.getPixel(col,row).getBlue()) * (amount / 100.00));
-                } else if (amount < 0) {
-                    tempRed = tempPic.getPixel(col,row).getRed() + (tempPic.getPixel(col,row).getRed() * (amount / 100.00));
-                    tempGreen = tempPic.getPixel(col,row).getGreen() + (tempPic.getPixel(col,row).getGreen() * (amount / 100.00));
-                    tempBlue = tempPic.getPixel(col,row).getBlue() + (tempPic.getPixel(col,row).getBlue() * (amount / 100.00));
-                } else {
-                    tempRed = tempPic.getPixel(col,row).getRed();
-                    tempGreen = tempPic.getPixel(col,row).getGreen();
-                    tempBlue = tempPic.getPixel(col,row).getBlue();
+                //Towards gray
+                if (amount < 0) {
+                    tempRed = tempPic.getPixel(col, row).getRed() * (1.0 + (amount / 100.0)) - (tempPic.getPixel(col, row).getIntensity() * amount / 100.0);
+                    tempGreen = tempPic.getPixel(col, row).getGreen() * (1.0 + (amount / 100.0)) - (tempPic.getPixel(col, row).getIntensity() * amount / 100.0);
+                    tempBlue = tempPic.getPixel(col, row).getBlue() * (1.0 + (amount / 100.0)) - (tempPic.getPixel(col, row).getIntensity() * amount / 100.0);
+                }
+                //Away from gray
+                else {
+                    double rgbMax = Math.max(tempPic.getPixel(col,row).getRed(), Math.max(tempPic.getPixel(col,row).getGreen(), tempPic.getPixel(col,row).getBlue()));
+                    tempRed = tempPic.getPixel(col, row).getRed() * ((rgbMax + (1.0 - rgbMax) * (amount / 100.0)) / rgbMax);
+                    tempGreen = tempPic.getPixel(col, row).getGreen() * ((rgbMax + (1.0 - rgbMax) * (amount / 100.0)) / rgbMax);
+                    tempBlue = tempPic.getPixel(col, row).getBlue() * ((rgbMax + (1.0 - rgbMax) * (amount / 100.0)) / rgbMax);
                 }
 
+                //Ties temp values to pixels in tempPic
                 Pixel tempPixel = new ColorPixel(tempRed, tempGreen, tempBlue);
                 tempPic.setPixel(col, row, tempPixel);
             }
         }
-
     }
 
 }
