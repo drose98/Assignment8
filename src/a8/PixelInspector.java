@@ -8,7 +8,7 @@ import java.io.IOException;
 public class PixelInspector {
     public static void main(String[] args) throws IOException {
         Picture p = A8Helper.readFromURL("http://www.cs.unc.edu/~kmp/kmp-in-namibia.jpg");
-        PixelInspectorWidget inspectorWidget = new PixelInspectorWidget(p, "KMP in Namibia");
+        PixelInspectorWidget inspectorWidget = new PixelInspectorWidget(p);
 
         JFrame main_frame = new JFrame();
         main_frame.setTitle("PixelInspector");

@@ -9,10 +9,11 @@ import javax.swing.JPanel;
 
 public class SimplePictureViewWidget extends JPanel implements MouseListener {
 
-	protected PictureView picture_view;
+	private PictureView picture_view;
 	
 	public SimplePictureViewWidget(Picture picture, String title) {
 		setLayout(new BorderLayout());
+
 		
 		picture_view = new PictureView(picture.createObservable());
 		picture_view.addMouseListener(this);
@@ -50,5 +51,6 @@ public class SimplePictureViewWidget extends JPanel implements MouseListener {
 		// TODO Auto-generated method stub
 		
 	}
+
 
 }
