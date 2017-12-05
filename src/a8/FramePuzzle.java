@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
+//Application that displays FramePuzzleWidget
+
 public class FramePuzzle {
     public static void main(String[] args) throws IOException {
         Picture p = A8Helper.readFromURL("http://www.cs.unc.edu/~kmp/kmp-in-namibia.jpg");
